@@ -1,6 +1,7 @@
 package com.example.p12service.dependenciesinjection
 
 import com.example.p12service.repository.MahasiswaRepository
+import com.example.p12service.repository.NetworkKontakRepository
 import com.example.p12service.service.MahasiswaService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -24,5 +25,7 @@ class MahasiswaContainer: AppContainer {
     private val mahasiswaService: MahasiswaService by lazy {
         retrofit.create(MahasiswaService::class.java)}
 
-
+    override val kontakRepository: MahasiswaRepository by lazy{
+        NetworkKontakRepository(mahasiswaService)
+    }
 }
