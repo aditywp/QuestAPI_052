@@ -1,6 +1,7 @@
 package com.example.p12service.service
 
 import com.example.p12service.model.Mahasiswa
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -13,7 +14,7 @@ interface MahasiswaService {
 
     @Headers(
         "Accept: application/json",
-        "Content-Type: appllication/json",
+        "Content-Type: application/json"
     )
 
     @POST("insertmahasiswa.php")
@@ -23,11 +24,11 @@ interface MahasiswaService {
     suspend fun getAllMahasiswa(): List<Mahasiswa>
 
     @GET("baca1mahasiswa.php/{nim}")
-    suspend fun  getMahasiswabyNim(@Query("nim") nim: String):Mahasiswa
+    suspend fun getMahasiswaByNim(@Query("nim") nim:String):Mahasiswa
 
     @PUT("editmahasiswa.php/{nim}")
     suspend fun updateMahasiswa(@Query("nim")nim:String, @Body mahasiswa: Mahasiswa)
 
     @DELETE("deletemahasiswa.php/{nim}")
-    suspend fun  deleteMahasiswa(@Query("nim")nim: String): retrofit2.Response<Void>
+    suspend fun deleteMahasiswa(@Query("nim")nim:String): Response<Void>
 }
