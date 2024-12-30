@@ -28,7 +28,7 @@ class DetailViewModel(
         viewModelScope.launch {
             detailUiState = DetailUiState(isLoading = true)
             try {
-                val result = mahasiswaRepository.getMahasiswabyNim(nim)
+                val result = mahasiswaRepository.getMahasiswaByNim(nim)
                 detailUiState = DetailUiState(
                     detailUiEvent = result.toDetailUiEvent(),
                     isLoading = false
