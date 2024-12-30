@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,8 +28,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -55,10 +61,12 @@ object DestinasiHome : DestinasiNavigasi {
 fun HomeScreen(
     navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
+    onDetailClick: (String) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedMahasiswa: Mahasiswa? by remember { mutableStateOf(null) }
     Scaffold(
             modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = {
@@ -83,15 +91,30 @@ fun HomeScreen(
     ) { innerPadding ->
         HomeStatus(
             homeUiState = viewModel.mhsUiState,
-            retryAction = { viewModel.getMhs() }, modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick, onDeleteClick = {
-                viewModel.deleteMhs(it.nim)
-                viewModel.getMhs()
+            retryAction = { viewModel.getMhs() },
+            modifier = Modifier.padding(innerPadding),
+            onDetailClick = onDetailClick,
+            onDeleteClick = {mahasiswa ->
+                selectedMahasiswa = mahasiswa
+                showDeleteDialog = true
             }
         )
+
+        if (showDeleteDialog && selectedMahasiswa != null) {
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    selectedMahasiswa?.let { mahasiswa ->
+                        viewModel.deleteMhs(mahasiswa.nim)
+                    }
+                    showDeleteDialog = false
+                },
+                onDeleteCancel = {
+                    showDeleteDialog = false
+                }
+            )
+        }
     }
 }
-
 
 @Composable
 fun HomeStatus(
@@ -192,7 +215,9 @@ fun MhsLayout(
 fun MhsCard(
     mahasiswa: Mahasiswa,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Mahasiswa) -> Unit = {}
+    onDeleteClick: (Mahasiswa) -> Unit = {},
+
+
 ) {
     Card(
         modifier = modifier,
@@ -237,5 +262,28 @@ fun MhsCard(
             )
         }
     }
+}
+
+@Composable
+private fun DeleteConfirmationDialog(
+    onDeleteConfirm: () -> Unit,
+    onDeleteCancel: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    AlertDialog(onDismissRequest = {/*Do Nothing*/},
+        title = {Text("Delete Data")},
+        text = {Text("Apakah anda yakin ingin menghapus data ini?")},
+        modifier = modifier,
+        dismissButton = {
+            TextButton(onClick = onDeleteCancel) {
+                Text("Cancel")
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDeleteConfirm) {
+                Text("Yes")
+            }
+        }
+    )
 }
 
