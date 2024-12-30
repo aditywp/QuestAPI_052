@@ -29,15 +29,16 @@ object DestinasiUpdate: DestinasiNavigasi {
 @Composable
 fun UpdateView(
     onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
     onNavigate:()-> Unit,
+    modifier: Modifier = Modifier,
     viewModel: UpdateViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = DestinasiUpdate.titleRes,
